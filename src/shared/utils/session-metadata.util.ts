@@ -10,7 +10,7 @@ import DeviceDetector = require('device-detector-js')
 
 countries.registerLocale(require('i18n-iso-countries/langs/ja.json'))
 
-export function getSessionMeatadata(req: Request, userAgent: string): SessionMetadata {
+export function getSessionMetadata(req: Request, userAgent: string): SessionMetadata {
   const ip = IS_DEV_ENV
     ? '13.113.244.32'
     : Array.isArray(req.headers['cf-connecting-ip'])
