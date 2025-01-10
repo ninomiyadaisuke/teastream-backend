@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { render } from '@react-email/components';
 import { VerificationTemplate } from './templates/verification.template';
+import { PasswordRecoveryTemplate } from './templates/password-recovery.template';
+import type { SessionMetadata } from '@/src/shared/types/session-metadata.types';
 
 @Injectable()
 export class MailService {
@@ -13,6 +15,13 @@ export class MailService {
     const html = await render(VerificationTemplate({ domain, token }))
     return this.sendMail(email, "アカウント認証 ", html)
   }
+
+  public async sendPasswordResetToken(email: string, token: string, metadata: SessionMetadata) {
+    const domain = this.configService.getOrThrow<string>("APPLICATION_URL")
+    const html = await render(PasswordRecoveryTemplate({ domain, token, metadata }))
+    return this.sendMail(email, "パスワードリセット ", html)
+  }
+
   private sendMail(email: string, subject: string, html: string) {
     return this.mailerService.sendMail({
       to: email,
