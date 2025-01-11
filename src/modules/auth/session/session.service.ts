@@ -73,6 +73,7 @@ export class SessionService {
         ]
       }
     })
+
     if (!user) {
       throw new NotFoundException('')
     }
@@ -92,25 +93,25 @@ export class SessionService {
 
     if (user.isTotpEnabled) {
       if (!pin) {
-				return {
-					message: 'A code is required to complete authorization'
-				}
+        return {
+          message: 'A code is required to complete authorization'
+        }
+      }
+      const totp = new TOTP({
+        issuer: 'TeaStream',
+        label: `${user.email}`,
+        algorithm: 'SHA1',
+        digits: 6,
+        secret: user.totpSecret
+      })
+
+      const delta = totp.validate({ token: pin })
+
+      if (delta === null) {
+        throw new BadRequestException('Invalid code')
       }
     }
 
-    const totp = new TOTP({
-      issuer: 'TeaStream',
-      label: `${user.email}`,
-      algorithm: 'SHA1',
-      digits: 6,
-      secret: user.totpSecret
-    })
-
-    const delta = totp.validate({ token: pin })
-
-    if (delta === null) {
-      throw new BadRequestException('Invalid code')
-    }
 
 
     const metadata = getSessionMetadata(req, userAgent)
