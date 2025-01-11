@@ -8,15 +8,16 @@ import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
 import { RedisService } from '@/src/core/redis/redis.service';
 import { destroySession, saveSession } from '@/src/shared/utils/session.util';
 import { VerificationService } from '../verification/verification.service';
+import { TOTP } from 'otpauth';
 
 @Injectable()
 export class SessionService {
-	public constructor(
-		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService,
-		private readonly configService: ConfigService,
-		private readonly verificationService: VerificationService
-	) {}
+  public constructor(
+    private readonly prismaService: PrismaService,
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
+    private readonly verificationService: VerificationService
+  ) { }
 
   public async findByUser(req: Request) {
     const userId = req.session.userId
@@ -63,7 +64,7 @@ export class SessionService {
   }
 
   public async login(req: Request, input: LoginInput, userAgent: string) {
-    const { login, password } = input
+    const { login, password, pin } = input
     const user = await this.prismaService.user.findFirst({
       where: {
         OR: [
@@ -82,12 +83,35 @@ export class SessionService {
       throw new UnauthorizedException('')
     }
 
-    if(!user.isEmailVerified) {
+    if (!user.isEmailVerified) {
       await this.verificationService.sendVerificationToken(user)
       throw new BadRequestException(
-				'Account not verified. Please check your email to confirm'
-			)
+        'Account not verified. Please check your email to confirm'
+      )
     }
+
+    if (user.isTotpEnabled) {
+      if (!pin) {
+				return {
+					message: 'A code is required to complete authorization'
+				}
+      }
+    }
+
+    const totp = new TOTP({
+      issuer: 'TeaStream',
+      label: `${user.email}`,
+      algorithm: 'SHA1',
+      digits: 6,
+      secret: user.totpSecret
+    })
+
+    const delta = totp.validate({ token: pin })
+
+    if (delta === null) {
+      throw new BadRequestException('Invalid code')
+    }
+
 
     const metadata = getSessionMetadata(req, userAgent)
     return saveSession(req, user, metadata)
