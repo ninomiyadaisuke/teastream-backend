@@ -133,6 +133,8 @@ exports.Prisma.UserScalarFieldEnum = {
   isVerified: 'isVerified',
   isEmailVerified: 'isEmailVerified',
   isTotpEnabled: 'isTotpEnabled',
+  isDeactivated: 'isDeactivated',
+  deactivatedAt: 'deactivatedAt',
   totpSecret: 'totpSecret',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
