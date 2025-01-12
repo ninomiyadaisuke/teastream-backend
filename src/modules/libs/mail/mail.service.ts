@@ -6,6 +6,7 @@ import { VerificationTemplate } from './templates/verification.template';
 import { PasswordRecoveryTemplate } from './templates/password-recovery.template';
 import type { SessionMetadata } from '@/src/shared/types/session-metadata.types';
 import { DeactivateTemplate } from './templates/deactivate.template';
+import { AccountDeletionTemplate } from './templates/account-deletion.template';
 
 @Injectable()
 export class MailService {
@@ -24,14 +25,20 @@ export class MailService {
   }
 
   public async sendDeactivateToken(
-		email: string,
-		token: string,
-		metadata: SessionMetadata
-	) {
-		const html = await render(DeactivateTemplate({ token, metadata }))
+    email: string,
+    token: string,
+    metadata: SessionMetadata
+  ) {
+    const html = await render(DeactivateTemplate({ token, metadata }))
 
-		return this.sendMail(email, 'アカウントの無効化', html)
-	}
+    return this.sendMail(email, 'アカウントの無効化', html)
+  }
+
+  public async sendAccountDeletion(email: string) {
+    const domain = this.configService.getOrThrow<string>("APPLICATION_URL")
+    const html = await render(AccountDeletionTemplate({ domain }))
+    return this.sendMail(email, 'アカウントの削除', html)
+  }
 
   private sendMail(email: string, subject: string, html: string) {
     return this.mailerService.sendMail({

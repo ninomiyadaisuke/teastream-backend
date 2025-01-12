@@ -14,6 +14,7 @@ import { MailModule } from '../modules/libs/mail/mail.module'
 import { PasswordRecoveryModule } from '../modules/auth/password-recovery/password-recovery.module'
 import { TotpModule } from '../modules/auth/totp/totp.module'
 import { DeactivateModule } from '../modules/auth/deactivate/deactivate.module'
+import { CronModule } from '../modules/cron/cron.module'
 
 @Module({
 	imports: [ConfigModule.forRoot({
@@ -35,6 +36,7 @@ import { DeactivateModule } from '../modules/auth/deactivate/deactivate.module'
 		PasswordRecoveryModule,
 		TotpModule,
 		DeactivateModule,
+		CronModule,
 	]
 })
 export class CoreModule { }

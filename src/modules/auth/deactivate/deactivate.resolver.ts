@@ -10,12 +10,12 @@ import { DeactivateAccountInput } from './inputs/deactivate-account.input';
 
 @Resolver('Deactivate')
 export class DeactivateResolver {
-  constructor(private readonly deactivateService: DeactivateService) {}
+  constructor(private readonly deactivateService: DeactivateService) { }
 
   @Authorization()
   @Mutation(() => AuthModel, { name: 'deactivateAccount' })
   public async deactivateAccount(
-    @Context() {req} :GqlContext,
+    @Context() { req }: GqlContext,
     @Args('data') input: DeactivateAccountInput,
     @Authorized() user: User,
     @UserAgent() userAgent: string
