@@ -18,6 +18,8 @@ import { CronModule } from '../modules/cron/cron.module'
 import { StorageModule } from '../modules/libs/storage/storage.module'
 import { ProfileModule } from '../modules/auth/profile/profile.module'
 import { StreamModule } from '../modules/stream/stream.module'
+import { LivekitModule } from '../modules/libs/livekit/livekit.module'
+import { getLiveKitConfig } from './config/livekit.config'
 
 @Module({
 	imports: [ConfigModule.forRoot({
@@ -30,11 +32,17 @@ import { StreamModule } from '../modules/stream/stream.module'
 		useFactory: getGraphQLConfig,
 		inject: [ConfigService]
 	}),
+	LivekitModule.registerAsync({
+		imports: [ConfigModule],
+		useFactory: getLiveKitConfig,
+		inject: [ConfigService]
+	}),
 		PrismaModule,
 		RedisModule,
 		AccountModule,
 		ProfileModule,
 		StorageModule,
+		LivekitModule,
 		SessionModule,
 		MailModule,
 		VerificationModule,
