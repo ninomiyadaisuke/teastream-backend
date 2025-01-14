@@ -49,6 +49,11 @@ export class AccountService {
         email,
         password: await hash(password),
         displayName: username,
+        stream:{
+          create: {
+            title: `stream ${username}`
+          }
+        }
       }
     })
     await this.verificationService.sendVerificationToken(user)
