@@ -20,6 +20,7 @@ import { ProfileModule } from '../modules/auth/profile/profile.module'
 import { StreamModule } from '../modules/stream/stream.module'
 import { LivekitModule } from '../modules/libs/livekit/livekit.module'
 import { getLiveKitConfig } from './config/livekit.config'
+import { IngressModule } from '../modules/stream/ingress/ingress.module'
 
 @Module({
 	imports: [ConfigModule.forRoot({
@@ -49,6 +50,7 @@ import { getLiveKitConfig } from './config/livekit.config'
 		PasswordRecoveryModule,
 		TotpModule,
 		DeactivateModule,
+		IngressModule,
 		CronModule,
 		StreamModule,
 	]
